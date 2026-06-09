@@ -39,6 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import id.my.hizari.moviy.ui.theme.Dimens
+import androidx.compose.ui.res.stringResource
+import id.my.hizari.moviy.R
 
 // Shimmer effect modifier for screen loading states
 fun Modifier.shimmerEffect(): Modifier = composed {
@@ -71,9 +73,9 @@ fun Modifier.shimmerEffect(): Modifier = composed {
 // Premium Error Card utilizing a frosted glass layout and styled retry button
 @Composable
 fun ErrorView(
-    message: String,
     modifier: Modifier = Modifier,
-    onRetry: () -> Unit
+    message: String,
+    onRetry: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -116,14 +118,14 @@ fun ErrorView(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Warning,
-                        contentDescription = "Warning",
+                        contentDescription = stringResource(R.string.desc_warning),
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(Dimens.IconMedium)
                     )
                 }
                 Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
                 Text(
-                    text = "Something went wrong",
+                    text = stringResource(R.string.error_something_went_wrong),
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center
@@ -149,7 +151,7 @@ fun ErrorView(
                         .testTag(TestTags.RETRY_BUTTON)
                 ) {
                     Text(
-                        text = "Retry Connection",
+                        text = stringResource(R.string.btn_retry_connection),
                         color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                     )
@@ -162,8 +164,8 @@ fun ErrorView(
 // Compact rating badge component to display movie vote averages with a subtle glow border
 @Composable
 fun RatingBadge(
+    modifier: Modifier = Modifier,
     rating: Double,
-    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -182,7 +184,7 @@ fun RatingBadge(
     ) {
         Icon(
             imageVector = Icons.Default.Star,
-            contentDescription = "Rating Star",
+            contentDescription = stringResource(R.string.desc_rating_star),
             tint = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.size(Dimens.IconSmall)
         )
@@ -197,7 +199,9 @@ fun RatingBadge(
 
 // Premium Configuration tutorial screen shown when the TMDB API key is missing
 @Composable
-fun ApiKeyMissingScreen() {
+fun ApiKeyMissingScreen(
+    modifier: Modifier = Modifier,
+) {
     val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
     val propertiesCodeSnippet = "TMDB_API_KEY=your_api_key_here"
@@ -211,7 +215,7 @@ fun ApiKeyMissingScreen() {
     )
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(brush = backgroundBrush)
             .padding(Dimens.PaddingMedium) // Reduced outer padding slightly for better content fit
@@ -252,7 +256,7 @@ fun ApiKeyMissingScreen() {
                 ) {
                     Icon(
                         imageVector = Icons.Default.Warning,
-                        contentDescription = "Missing API Key",
+                        contentDescription = stringResource(R.string.desc_missing_api_key),
                         tint = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.size(Dimens.IconMedium)
                     )
@@ -260,14 +264,14 @@ fun ApiKeyMissingScreen() {
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
                 Text(
-                    text = "TMDB API Key Required",
+                    text = stringResource(R.string.title_api_key_required),
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(Dimens.PaddingSmall))
                 Text(
-                    text = "To run this application, you must add your The Movie Database (TMDB) API key (v3) to local.properties.",
+                    text = stringResource(R.string.desc_api_key_instructions),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
@@ -278,21 +282,21 @@ fun ApiKeyMissingScreen() {
                 // Step 1 Layout Row
                 TutorialStepRow(
                     stepNumber = "1",
-                    text = "Open 'local.properties' file located in the root of the project."
+                    text = stringResource(R.string.step_open_properties)
                 )
                 Spacer(modifier = Modifier.height(Dimens.PaddingNormal))
 
                 // Step 2 Layout Row
                 TutorialStepRow(
                     stepNumber = "2",
-                    text = "Paste the TMDB API key parameter code snippet."
+                    text = stringResource(R.string.step_paste_snippet)
                 )
                 Spacer(modifier = Modifier.height(Dimens.PaddingNormal))
 
                 // Step 3 Layout Row
                 TutorialStepRow(
                     stepNumber = "3",
-                    text = "Replace the placeholder and run/build the project again."
+                    text = stringResource(R.string.step_replace_placeholder)
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingLarge))
@@ -346,7 +350,7 @@ fun ApiKeyMissingScreen() {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.ContentCopy,
-                                contentDescription = "Copy to clipboard",
+                                contentDescription = stringResource(R.string.desc_copy_to_clipboard),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(Dimens.IconSmall)
                             )
@@ -361,9 +365,9 @@ fun ApiKeyMissingScreen() {
 // Styled Step component with gradient index badge
 @Composable
 fun TutorialStepRow(
+    modifier: Modifier = Modifier,
     stepNumber: String,
     text: String,
-    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -409,7 +413,7 @@ fun ApiKeyMissingScreenPreview() {
 @Composable
 fun ErrorViewPreview() {
     MaterialTheme {
-        ErrorView(message = "Network error: Connection timeout.") {}
+        ErrorView(message = stringResource(R.string.preview_error_network)) {}
     }
 }
 

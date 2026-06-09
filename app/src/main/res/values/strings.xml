@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">Moviy</string>
+
+    <!-- Navigation Destinations -->
+    <string name="nav_discover">Discover</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Placeholder screens -->
+    <string name="coming_soon_favorites">Favorites Screen (Coming Soon)</string>
+    <string name="coming_soon_profile">Profile Screen (Coming Soon)</string>
+
+    <!-- Genres Screen -->
+    <string name="title_discover_genres">Discover Genres</string>
+
+    <!-- Common UI: Error View -->
+    <string name="desc_warning">Warning</string>
+    <string name="error_something_went_wrong">Something went wrong</string>
+    <string name="btn_retry_connection">Retry Connection</string>
+    <string name="desc_rating_star">Rating Star</string>
+
+    <!-- Common UI: API Key Missing Screen -->
+    <string name="desc_missing_api_key">Missing API Key</string>
+    <string name="title_api_key_required">TMDB API Key Required</string>
+    <string name="desc_api_key_instructions">To run this application, you must add your The Movie Database (TMDB) API key (v3) to local.properties.</string>
+    <string name="step_open_properties">Open \'local.properties\' file located in the root of the project.</string>
+    <string name="step_paste_snippet">Paste the TMDB API key parameter code snippet.</string>
+    <string name="step_replace_placeholder">Replace the placeholder and run/build the project again.</string>
+    <string name="desc_copy_to_clipboard">Copy to clipboard</string>
+
+    <!-- Error Fallbacks & Previews -->
+    <string name="error_connection_timeout">Connection timeout. Please check your internet connection.</string>
+    <string name="error_unexpected">An unexpected error occurred</string>
+    <string name="preview_error_network">Network error: Connection timeout.</string>
 </resources>

@@ -1,10 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
     namespace = "id.my.hizari.moviy.data"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24
@@ -30,6 +32,18 @@ android {
 dependencies {
     implementation(project(":domain"))
 
+    // Hilt Dependency Injection
+    implementation(libs.dagger.hilt.android)
+    ksp(libs.dagger.hilt.compiler)
+
+    // Room Database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Preferences DataStore
+    implementation(libs.androidx.datastore.preferences)
+
     // Retrofit & OkHttp
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
@@ -39,6 +53,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.mockk.android)
 }
