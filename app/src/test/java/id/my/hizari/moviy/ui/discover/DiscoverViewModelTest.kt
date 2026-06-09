@@ -11,9 +11,9 @@ package id.my.hizari.moviy.ui.discover
 import androidx.lifecycle.SavedStateHandle
 import id.my.hizari.moviy.domain.model.Movie
 import id.my.hizari.moviy.domain.usecase.GetDiscoverMoviesUseCase
+import id.my.hizari.moviy.navigation.NavigationArgs
 import id.my.hizari.moviy.ui.components.UiText
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,8 +38,8 @@ class DiscoverViewModelTest {
         Dispatchers.setMain(testDispatcher)
         savedStateHandle = SavedStateHandle(
             mapOf(
-                "genreId" to "28",
-                "genreName" to "Action"
+                NavigationArgs.GENRE_ID to "28",
+                NavigationArgs.GENRE_NAME to "Action"
             )
         )
     }

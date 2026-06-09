@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.ui.theme.Dimens
+import java.util.Locale
 
 @Composable
 fun RatingBadge(
@@ -52,7 +53,7 @@ fun RatingBadge(
         )
         Spacer(modifier = Modifier.width(Dimens.PaddingTiny))
         Text(
-            text = String.format("%.1f", rating),
+            text = String.format(Locale.getDefault(), "%.1f", rating),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.labelSmall
         )

@@ -43,4 +43,10 @@ interface TmdbApi {
     suspend fun getMovieVideos(
         @Path("movie_id") movieId: Int
     ): VideoResponse
+
+    @GET("search/movie")
+    suspend fun searchMovies(
+        @Query("query") query: String,
+        @Query("page") page: Int
+    ): MovieResponse
 }

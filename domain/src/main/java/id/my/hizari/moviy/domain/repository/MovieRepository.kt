@@ -26,6 +26,8 @@ interface MovieRepository {
 
     suspend fun getMovieTrailers(movieId: Int): List<Video>
 
+    suspend fun searchMovies(query: String, page: Int): List<Movie>
+
     fun getFavoriteMovies(): Flow<List<Movie>>
 
     suspend fun toggleFavorite(movie: Movie): Boolean

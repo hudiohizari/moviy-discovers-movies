@@ -20,4 +20,5 @@ object TestTags {
     const val FAVORITE_TOGGLE = "favorite_toggle"
     const val PAGINATION_LOADING_FOOTER = "pagination_loading_footer"
     const val PAGINATION_ERROR_FOOTER = "pagination_error_footer"
+    const val SEARCH_INPUT = "search_input"
 }

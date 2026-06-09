@@ -36,4 +36,10 @@
     <!-- Navigation & Common UI -->
     <string name="desc_back">Back</string>
     <string name="btn_retry">Retry</string>
+
+    <!-- Search Screen -->
+    <string name="hint_search_movies">Search movies by title...</string>
+    <string name="desc_clear_query">Clear search query</string>
+    <string name="search_no_results">No movies found matching \"%1$s\"</string>
+    <string name="search_start_typing">Start typing to search movies</string>
 </resources>

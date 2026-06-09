@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.domain.usecase.GetDiscoverMoviesUseCase
+import id.my.hizari.moviy.navigation.NavigationArgs
 import id.my.hizari.moviy.ui.components.UiText
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,8 +33,8 @@ class DiscoverViewModel @Inject constructor(
     val state: StateFlow<DiscoverState> = _state.asStateFlow()
 
     init {
-        val genreId = savedStateHandle.get<String>("genreId")
-        val genreName = savedStateHandle.get<String>("genreName")
+        val genreId = savedStateHandle.get<String>(NavigationArgs.GENRE_ID)
+        val genreName = savedStateHandle.get<String>(NavigationArgs.GENRE_NAME)
         if (genreId != null && genreName != null) {
             handleIntent(DiscoverIntent.LoadMovies(genreId, genreName))
         }

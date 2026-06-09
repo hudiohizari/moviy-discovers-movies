@@ -46,9 +46,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import id.my.hizari.moviy.navigation.NavigationArgs
+import id.my.hizari.moviy.navigation.Screen
 import id.my.hizari.moviy.ui.components.ApiKeyMissingScreen
 import id.my.hizari.moviy.ui.discover.DiscoverScreen
 import id.my.hizari.moviy.ui.genres.GenreScreen
+import id.my.hizari.moviy.ui.search.SearchScreen
 import id.my.hizari.moviy.ui.theme.MoviyTheme
 
 @AndroidEntryPoint
@@ -74,7 +77,7 @@ fun MoviyApp(
         return
     }
 
-    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.DISCOVER) }
+    var currentDestination by rememberSaveable { mutableStateOf(value = AppDestinations.DISCOVER) }
 
     // Pre-calculate custom M3 item colors inside the @Composable scope
     val itemColors = NavigationSuiteDefaults.itemColors(
@@ -95,10 +98,10 @@ fun MoviyApp(
                     icon = {
                         Icon(
                             imageVector = it.icon,
-                            contentDescription = stringResource(it.labelRes)
+                            contentDescription = stringResource(id = it.labelRes)
                         )
                     },
-                    label = { Text(stringResource(it.labelRes)) },
+                    label = { Text(stringResource(id = it.labelRes)) },
                     selected = it == currentDestination,
                     onClick = { currentDestination = it },
                     colors = itemColors
@@ -109,7 +112,11 @@ fun MoviyApp(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                .windowInsetsPadding(
+                    insets = WindowInsets.safeDrawing.only(
+                        sides = WindowInsetsSides.Top
+                    )
+                )
         ) {
             val contentModifier = Modifier.fillMaxSize()
 
@@ -118,22 +125,34 @@ fun MoviyApp(
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = "genres",
+                        startDestination = Screen.Genres.route,
                         modifier = contentModifier
                     ) {
-                        composable("genres") {
+                        composable(Screen.Genres.route) {
                             GenreScreen(
                                 onGenreClick = { genreId, genreName ->
-                                    navController.navigate("discover/$genreId/$genreName")
+                                    navController.navigate(
+                                        route = Screen.Discover.createRoute(
+                                            genreId = genreId,
+                                            genreName = genreName
+                                        )
+                                    )
+                                },
+                                onSearchClick = {
+                                    navController.navigate(Screen.Search.route)
                                 },
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
                         composable(
-                            route = "discover/{genreId}/{genreName}",
+                            route = Screen.Discover.route,
                             arguments = listOf(
-                                navArgument("genreId") { type = NavType.StringType },
-                                navArgument("genreName") { type = NavType.StringType }
+                                navArgument(name = NavigationArgs.GENRE_ID) {
+                                    type = NavType.StringType
+                                },
+                                navArgument(name = NavigationArgs.GENRE_NAME) {
+                                    type = NavType.StringType
+                                }
                             )
                         ) {
                             DiscoverScreen(
@@ -146,8 +165,20 @@ fun MoviyApp(
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
+                        composable(Screen.Search.route) {
+                            SearchScreen(
+                                onMovieClick = { _ ->
+                                    // Will navigate to Detail in Phase 4
+                                },
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
                     }
                 }
+
                 AppDestinations.FAVORITES -> {
                     Box(
                         modifier = contentModifier,
@@ -160,6 +191,7 @@ fun MoviyApp(
                         )
                     }
                 }
+
                 AppDestinations.PROFILE -> {
                     Box(
                         modifier = contentModifier,
@@ -178,10 +210,10 @@ fun MoviyApp(
 }
 
 enum class AppDestinations(
-    @StringRes val labelRes: Int,
+    @param:StringRes val labelRes: Int,
     val icon: ImageVector,
 ) {
-    DISCOVER(R.string.nav_discover, Icons.Default.Movie),
-    FAVORITES(R.string.nav_favorites, Icons.Default.Favorite),
-    PROFILE(R.string.nav_profile, Icons.Default.AccountCircle),
+    DISCOVER(labelRes = R.string.nav_discover, icon = Icons.Default.Movie),
+    FAVORITES(labelRes = R.string.nav_favorites, icon = Icons.Default.Favorite),
+    PROFILE(labelRes = R.string.nav_profile, icon = Icons.Default.AccountCircle),
 }

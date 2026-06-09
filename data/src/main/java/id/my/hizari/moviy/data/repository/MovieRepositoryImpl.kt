@@ -36,7 +36,7 @@ class MovieRepositoryImpl @Inject constructor(
             domainGenres
         } catch (e: Exception) {
             val cached = localGenreStore.getGenres()
-            if (cached.isNotEmpty()) cached else throw e
+            cached.ifEmpty { throw e }
         }
     }
 
@@ -57,6 +57,11 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getMovieTrailers(movieId: Int): List<Video> {
         val response = api.getMovieVideos(movieId)
+        return response.results.map { it.toDomain() }
+    }
+
+    override suspend fun searchMovies(query: String, page: Int): List<Movie> {
+        val response = api.searchMovies(query, page)
         return response.results.map { it.toDomain() }
     }
 

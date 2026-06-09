@@ -29,6 +29,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.hilt.navigation.compose.hiltViewModel
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.domain.model.Genre
@@ -46,6 +48,7 @@ fun GenreScreen(
     modifier: Modifier = Modifier,
     viewModel: GenreViewModel = hiltViewModel(),
     onGenreClick: (Int, String) -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -54,6 +57,7 @@ fun GenreScreen(
         state = state,
         onIntent = viewModel::handleIntent,
         onGenreClick = onGenreClick,
+        onSearchClick = onSearchClick,
     )
 }
 
@@ -64,6 +68,7 @@ fun GenreContent(
     state: GenreState,
     onIntent: (GenreIntent) -> Unit,
     onGenreClick: (Int, String) -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -75,6 +80,15 @@ fun GenreContent(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
+                },
+                actions = {
+                    IconButton(onClick = onSearchClick) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.hint_search_movies),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
@@ -225,7 +239,8 @@ fun GenreScreenSuccessPreview() {
                 )
             ),
             onIntent = {},
-            onGenreClick = { _, _ -> }
+            onGenreClick = { _, _ -> },
+            onSearchClick = {}
         )
     }
 }
@@ -237,7 +252,8 @@ fun GenreScreenLoadingPreview() {
         GenreContent(
             state = GenreState(isLoading = true),
             onIntent = {},
-            onGenreClick = { _, _ -> }
+            onGenreClick = { _, _ -> },
+            onSearchClick = {}
         )
     }
 }
@@ -249,7 +265,8 @@ fun GenreScreenErrorPreview() {
         GenreContent(
             state = GenreState(error = UiText.StringResource(R.string.error_connection_timeout)),
             onIntent = {},
-            onGenreClick = { _, _ -> }
+            onGenreClick = { _, _ -> },
+            onSearchClick = {}
         )
     }
 }

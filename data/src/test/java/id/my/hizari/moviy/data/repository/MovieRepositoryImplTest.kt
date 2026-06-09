@@ -122,6 +122,44 @@ class MovieRepositoryImplTest {
     }
 
     @Test
+    fun searchMovies_success_returnsMappedMovies() {
+        runBlocking {
+            val movieResponse = MovieResponse(
+                page = 1,
+                results = listOf(
+                    MovieDto(
+                        id = 101,
+                        title = "Searched Movie",
+                        overview = "Searched Overview",
+                        posterPath = "/search.jpg",
+                        backdropPath = "/back_search.jpg",
+                        releaseDate = "2026-06-09",
+                        voteAverage = 8.5
+                    )
+                ),
+                totalPages = 5,
+                totalResults = 50
+            )
+            val expectedMovies = listOf(
+                Movie(
+                    id = 101,
+                    title = "Searched Movie",
+                    overview = "Searched Overview",
+                    posterPath = "/search.jpg",
+                    backdropPath = "/back_search.jpg",
+                    releaseDate = "2026-06-09",
+                    voteAverage = 8.5
+                )
+            )
+            coEvery { api.searchMovies("Action", 1) } returns movieResponse
+
+            val result = repository.searchMovies("Action", 1)
+
+            assertEquals(expectedMovies, result)
+        }
+    }
+
+    @Test
     fun getMovieDetails_success_returnsMappedMovie() {
         runBlocking {
             val movieDetailDto = MovieDto(
