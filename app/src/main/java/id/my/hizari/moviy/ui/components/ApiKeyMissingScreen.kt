@@ -9,7 +9,6 @@
 package id.my.hizari.moviy.ui.components
 
 import android.content.ClipData
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -17,16 +16,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipEntry
@@ -36,168 +32,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
+import id.my.hizari.moviy.R
 import id.my.hizari.moviy.ui.theme.Dimens
 import androidx.compose.ui.res.stringResource
-import id.my.hizari.moviy.R
+import kotlinx.coroutines.launch
 
-// Shimmer effect modifier for screen loading states
-fun Modifier.shimmerEffect(): Modifier = composed {
-    val transition = rememberInfiniteTransition(label = "shimmer")
-    val translateAnim by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "shimmer_translation"
-    )
-
-    val shimmerColors = listOf(
-        MaterialTheme.colorScheme.surface,
-        MaterialTheme.colorScheme.secondaryContainer,
-        MaterialTheme.colorScheme.surface
-    )
-
-    val brush = Brush.linearGradient(
-        colors = shimmerColors,
-        start = Offset(x = translateAnim - 300f, y = translateAnim - 300f),
-        end = Offset(x = translateAnim, y = translateAnim)
-    )
-
-    this.background(brush = brush)
-}
-
-// Premium Error Card utilizing a frosted glass layout and styled retry button
-@Composable
-fun ErrorView(
-    modifier: Modifier = Modifier,
-    message: String,
-    onRetry: () -> Unit = {}
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(Dimens.PaddingLarge)
-            .testTag(TestTags.ERROR_CARD),
-        contentAlignment = Alignment.Center
-    ) {
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
-            ),
-            shape = RoundedCornerShape(Dimens.CornerLarge),
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = Dimens.BorderThin,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(Dimens.CornerLarge)
-                )
-        ) {
-            Column(
-                modifier = Modifier.padding(Dimens.PaddingLarge),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(Dimens.IconExtraLarge)
-                        .background(
-                            color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f),
-                            shape = CircleShape
-                        )
-                        .border(
-                            width = Dimens.BorderThin,
-                            color = MaterialTheme.colorScheme.error.copy(alpha = 0.3f),
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = stringResource(R.string.desc_warning),
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(Dimens.IconMedium)
-                    )
-                }
-                Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
-                Text(
-                    text = stringResource(R.string.error_something_went_wrong),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(Dimens.PaddingSmall))
-                Text(
-                    text = message,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(Dimens.PaddingLarge))
-                Button(
-                    onClick = onRetry,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ),
-                    shape = RoundedCornerShape(Dimens.CornerMedium),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(Dimens.ButtonHeightNormal)
-                        .testTag(TestTags.RETRY_BUTTON)
-                ) {
-                    Text(
-                        text = stringResource(R.string.btn_retry_connection),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
-            }
-        }
-    }
-}
-
-// Compact rating badge component to display movie vote averages with a subtle glow border
-@Composable
-fun RatingBadge(
-    modifier: Modifier = Modifier,
-    rating: Double,
-) {
-    Row(
-        modifier = modifier
-            .background(
-                color = Color.Black.copy(alpha = 0.65f),
-                shape = RoundedCornerShape(Dimens.CornerNormal)
-            )
-            .border(
-                width = Dimens.BorderThin,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                shape = RoundedCornerShape(Dimens.CornerNormal)
-            )
-            .padding(horizontal = Dimens.PaddingSmall, vertical = Dimens.PaddingTiny),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Star,
-            contentDescription = stringResource(R.string.desc_rating_star),
-            tint = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.size(Dimens.IconSmall)
-        )
-        Spacer(modifier = Modifier.width(Dimens.PaddingTiny))
-        Text(
-            text = String.format("%.1f", rating),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.labelSmall
-        )
-    }
-}
-
-// Premium Configuration tutorial screen shown when the TMDB API key is missing
 @Composable
 fun ApiKeyMissingScreen(
     modifier: Modifier = Modifier,
@@ -218,7 +57,7 @@ fun ApiKeyMissingScreen(
         modifier = modifier
             .fillMaxSize()
             .background(brush = backgroundBrush)
-            .padding(Dimens.PaddingMedium) // Reduced outer padding slightly for better content fit
+            .padding(Dimens.PaddingMedium)
             .testTag(TestTags.API_KEY_MISSING_SCREEN),
         contentAlignment = Alignment.Center
     ) {
@@ -236,10 +75,9 @@ fun ApiKeyMissingScreen(
                 )
         ) {
             Column(
-                modifier = Modifier.padding(Dimens.PaddingMedium), // Changed inner padding to PaddingMedium to prevent horizontal clipping
+                modifier = Modifier.padding(Dimens.PaddingMedium),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Glow Circle warning icon header
                 Box(
                     modifier = Modifier
                         .size(Dimens.IconExtraLarge)
@@ -279,21 +117,18 @@ fun ApiKeyMissingScreen(
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingLarge))
 
-                // Step 1 Layout Row
                 TutorialStepRow(
                     stepNumber = "1",
                     text = stringResource(R.string.step_open_properties)
                 )
                 Spacer(modifier = Modifier.height(Dimens.PaddingNormal))
 
-                // Step 2 Layout Row
                 TutorialStepRow(
                     stepNumber = "2",
                     text = stringResource(R.string.step_paste_snippet)
                 )
                 Spacer(modifier = Modifier.height(Dimens.PaddingNormal))
 
-                // Step 3 Layout Row
                 TutorialStepRow(
                     stepNumber = "3",
                     text = stringResource(R.string.step_replace_placeholder)
@@ -301,7 +136,6 @@ fun ApiKeyMissingScreen(
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingLarge))
 
-                // Terminal Shell Container for Code Snippet
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f),
                     shape = RoundedCornerShape(Dimens.CornerMedium),
@@ -327,9 +161,9 @@ fun ApiKeyMissingScreen(
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Medium
                             ),
-                            modifier = Modifier.weight(1f) // Added weight to allow text wrapping/scaling and prevent horizontal overflow
+                            modifier = Modifier.weight(1f)
                         )
-                        Spacer(modifier = Modifier.width(Dimens.PaddingSmall)) // Breathing spacer before the copy button
+                        Spacer(modifier = Modifier.width(Dimens.PaddingSmall))
                         IconButton(
                             onClick = {
                                 scope.launch {
@@ -362,7 +196,6 @@ fun ApiKeyMissingScreen(
     }
 }
 
-// Styled Step component with gradient index badge
 @Composable
 fun TutorialStepRow(
     modifier: Modifier = Modifier,
@@ -400,27 +233,10 @@ fun TutorialStepRow(
     }
 }
 
-// Previews for Visual Inspection in IDE
 @Preview(showBackground = true)
 @Composable
 fun ApiKeyMissingScreenPreview() {
     MaterialTheme {
         ApiKeyMissingScreen()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ErrorViewPreview() {
-    MaterialTheme {
-        ErrorView(message = stringResource(R.string.preview_error_network)) {}
-    }
-}
-
-@Preview
-@Composable
-fun RatingBadgePreview() {
-    MaterialTheme {
-        RatingBadge(rating = 8.5)
     }
 }

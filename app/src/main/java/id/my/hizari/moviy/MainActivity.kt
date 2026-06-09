@@ -15,9 +15,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
@@ -38,8 +40,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import id.my.hizari.moviy.ui.components.ApiKeyMissingScreen
+import id.my.hizari.moviy.ui.discover.DiscoverScreen
 import id.my.hizari.moviy.ui.genres.GenreScreen
 import id.my.hizari.moviy.ui.theme.MoviyTheme
 
@@ -101,18 +109,44 @@ fun MoviyApp(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .consumeWindowInsets(WindowInsets.safeDrawing)
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
         ) {
             val contentModifier = Modifier.fillMaxSize()
 
             when (currentDestination) {
                 AppDestinations.DISCOVER -> {
-                    GenreScreen(
-                        onGenreClick = { _, _ ->
-                            // Will navigate to Discover Screen in Phase 3
-                        },
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = "genres",
                         modifier = contentModifier
-                    )
+                    ) {
+                        composable("genres") {
+                            GenreScreen(
+                                onGenreClick = { genreId, genreName ->
+                                    navController.navigate("discover/$genreId/$genreName")
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                        composable(
+                            route = "discover/{genreId}/{genreName}",
+                            arguments = listOf(
+                                navArgument("genreId") { type = NavType.StringType },
+                                navArgument("genreName") { type = NavType.StringType }
+                            )
+                        ) {
+                            DiscoverScreen(
+                                onMovieClick = { _ ->
+                                    // Will navigate to Detail in Phase 4
+                                },
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    }
                 }
                 AppDestinations.FAVORITES -> {
                     Box(

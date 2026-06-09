@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.domain.model.Genre
 import id.my.hizari.moviy.ui.components.ErrorView
+import id.my.hizari.moviy.ui.components.ScrollShadowContainer
 import id.my.hizari.moviy.ui.components.TestTags
 import id.my.hizari.moviy.ui.components.UiText
 import id.my.hizari.moviy.ui.components.shimmerEffect
@@ -115,20 +117,27 @@ fun GenreGrid(
     genres: List<Genre>,
     onGenreClick: (Int, String) -> Unit,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 160.dp),
-        contentPadding = PaddingValues(Dimens.PaddingMedium),
-        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
-        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
-        modifier = modifier
-            .fillMaxSize()
-            .testTag(TestTags.GENRE_GRID)
+    val gridState = rememberLazyGridState()
+    ScrollShadowContainer(
+        lazyGridState = gridState,
+        modifier = modifier.fillMaxSize()
     ) {
-        items(genres) { genre ->
-            GenreCard(
-                genre = genre,
-                onClick = { onGenreClick(genre.id, genre.name) }
-            )
+        LazyVerticalGrid(
+            state = gridState,
+            columns = GridCells.Adaptive(minSize = 160.dp),
+            contentPadding = PaddingValues(Dimens.PaddingMedium),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
+            verticalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag(TestTags.GENRE_GRID)
+        ) {
+            items(genres) { genre ->
+                GenreCard(
+                    genre = genre,
+                    onClick = { onGenreClick(genre.id, genre.name) }
+                )
+            }
         }
     }
 }
