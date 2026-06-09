@@ -10,6 +10,7 @@ package id.my.hizari.moviy
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.StringRes
@@ -32,27 +33,22 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaul
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavType
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
-import id.my.hizari.moviy.navigation.NavigationArgs
 import id.my.hizari.moviy.navigation.Screen
+import id.my.hizari.moviy.navigation.discoverGraph
+import id.my.hizari.moviy.navigation.favoritesGraph
+import id.my.hizari.moviy.navigation.profileGraph
 import id.my.hizari.moviy.ui.components.ApiKeyMissingScreen
-import id.my.hizari.moviy.ui.discover.DiscoverScreen
-import id.my.hizari.moviy.ui.genres.GenreScreen
-import id.my.hizari.moviy.ui.detail.MovieDetailScreen
-import id.my.hizari.moviy.ui.search.SearchScreen
 import id.my.hizari.moviy.ui.theme.MoviyTheme
 
 @AndroidEntryPoint
@@ -78,7 +74,13 @@ fun MoviyApp(
         return
     }
 
-    var currentDestination by rememberSaveable { mutableStateOf(value = AppDestinations.DISCOVER) }
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = AppDestinations.entries.find {
+        it.graphRoute == navBackStackEntry?.destination?.parent?.route
+    } ?: AppDestinations.DISCOVER
+
+    val tabHistory = remember { mutableStateListOf<String>(Screen.DiscoverGraph.route) }
 
     // Pre-calculate custom M3 item colors inside the @Composable scope
     val itemColors = NavigationSuiteDefaults.itemColors(
@@ -104,7 +106,24 @@ fun MoviyApp(
                     },
                     label = { Text(stringResource(id = it.labelRes)) },
                     selected = it == currentDestination,
-                    onClick = { currentDestination = it },
+                    onClick = {
+                        val targetRoute = it.graphRoute
+
+                        if (it == currentDestination) {
+                            navController.popBackStack(route = it.rootRoute, inclusive = false)
+                        } else {
+                            tabHistory.remove(element = targetRoute)
+                            tabHistory.add(element = targetRoute)
+
+                            navController.navigate(route = targetRoute) {
+                                popUpTo(id = navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    },
                     colors = itemColors
                 )
             }
@@ -119,117 +138,39 @@ fun MoviyApp(
                     )
                 )
         ) {
-            val contentModifier = Modifier.fillMaxSize()
-
-            when (currentDestination) {
-                AppDestinations.DISCOVER -> {
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.Genres.route,
-                        modifier = contentModifier
-                    ) {
-                        composable(Screen.Genres.route) {
-                            GenreScreen(
-                                onGenreClick = { genreId, genreName ->
-                                    navController.navigate(
-                                        route = Screen.Discover.createRoute(
-                                            genreId = genreId,
-                                            genreName = genreName
-                                        )
-                                    )
-                                },
-                                onSearchClick = {
-                                    navController.navigate(Screen.Search.route)
-                                },
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                        composable(
-                            route = Screen.Discover.route,
-                            arguments = listOf(
-                                navArgument(name = NavigationArgs.GENRE_ID) {
-                                    type = NavType.StringType
-                                },
-                                navArgument(name = NavigationArgs.GENRE_NAME) {
-                                    type = NavType.StringType
-                                }
-                            )
-                        ) {
-                            DiscoverScreen(
-                                onMovieClick = { movieId ->
-                                    navController.navigate(
-                                        route = Screen.MovieDetail.createRoute(
-                                            movieId = movieId
-                                        )
-                                    )
-                                },
-                                onBackClick = {
-                                    navController.popBackStack()
-                                },
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                        composable(route = Screen.Search.route) {
-                            SearchScreen(
-                                onMovieClick = { movieId ->
-                                    navController.navigate(
-                                        route = Screen.MovieDetail.createRoute(
-                                            movieId = movieId
-                                        )
-                                    )
-                                },
-                                onBackClick = {
-                                    navController.popBackStack()
-                                },
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                        composable(
-                            route = Screen.MovieDetail.route,
-                            arguments = listOf(
-                                navArgument(name = NavigationArgs.MOVIE_ID, builder = {
-                                    type = NavType.IntType
-                                })
-                            ),
-                            content = {
-                                MovieDetailScreen(
-                                    onBackClick = {
-                                        navController.popBackStack()
-                                    },
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            }
-                        )
-                    }
-                }
-
-                AppDestinations.FAVORITES -> {
-                    Box(
-                        modifier = contentModifier,
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.coming_soon_favorites),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-
-                AppDestinations.PROFILE -> {
-                    Box(
-                        modifier = contentModifier,
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.coming_soon_profile),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
+            NavHost(
+                navController = navController,
+                startDestination = Screen.DiscoverGraph.route,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                discoverGraph(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController
+                )
+                favoritesGraph(
+                    modifier = Modifier.fillMaxSize()
+                )
+                profileGraph(
+                    modifier = Modifier.fillMaxSize()
+                )
             }
+
+            val isAtTabRoot =
+                navBackStackEntry?.destination?.id == navBackStackEntry?.destination?.parent?.findStartDestination()?.id
+            BackHandler(
+                enabled = tabHistory.size > 1 && isAtTabRoot,
+                onBack = {
+                    val currentTabRoute = tabHistory.removeAt(index = tabHistory.lastIndex)
+                    val previousTabRoute = tabHistory.lastOrNull() ?: Screen.DiscoverGraph.route
+                    navController.navigate(route = previousTabRoute) {
+                        popUpTo(id = navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
         }
     }
 }
@@ -237,8 +178,25 @@ fun MoviyApp(
 enum class AppDestinations(
     @param:StringRes val labelRes: Int,
     val icon: ImageVector,
+    val graphRoute: String,
+    val rootRoute: String,
 ) {
-    DISCOVER(labelRes = R.string.nav_discover, icon = Icons.Default.Movie),
-    FAVORITES(labelRes = R.string.nav_favorites, icon = Icons.Default.Favorite),
-    PROFILE(labelRes = R.string.nav_profile, icon = Icons.Default.AccountCircle),
+    DISCOVER(
+        labelRes = R.string.nav_discover,
+        icon = Icons.Default.Movie,
+        graphRoute = Screen.DiscoverGraph.route,
+        rootRoute = Screen.Genres.route
+    ),
+    FAVORITES(
+        labelRes = R.string.nav_favorites,
+        icon = Icons.Default.Favorite,
+        graphRoute = Screen.FavoritesGraph.route,
+        rootRoute = Screen.Favorites.route
+    ),
+    PROFILE(
+        labelRes = R.string.nav_profile,
+        icon = Icons.Default.AccountCircle,
+        graphRoute = Screen.ProfileGraph.route,
+        rootRoute = Screen.Profile.route
+    ),
 }

@@ -22,4 +22,9 @@ sealed class Screen(val route: String) {
             return "detail/$movieId"
         }
     }
+    object DiscoverGraph : Screen("discover_graph")
+    object FavoritesGraph : Screen("favorites_graph")
+    object ProfileGraph : Screen("profile_graph")
+    object Favorites : Screen("favorites_screen")
+    object Profile : Screen("profile_screen")
 }
