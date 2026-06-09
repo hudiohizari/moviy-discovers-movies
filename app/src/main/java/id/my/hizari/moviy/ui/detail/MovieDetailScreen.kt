@@ -65,24 +65,24 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import id.my.hizari.moviy.R
+import id.my.hizari.moviy.domain.model.Genre
 import id.my.hizari.moviy.domain.model.Movie
 import id.my.hizari.moviy.domain.model.Review
+import id.my.hizari.moviy.domain.model.Video
 import id.my.hizari.moviy.ui.components.ErrorView
 import id.my.hizari.moviy.ui.components.RatingBadge
 import id.my.hizari.moviy.ui.components.TestTags
+import id.my.hizari.moviy.ui.components.TrailerPlayer
+import id.my.hizari.moviy.ui.components.UiText
 import id.my.hizari.moviy.ui.components.shimmerEffect
 import id.my.hizari.moviy.ui.theme.Dimens
+import id.my.hizari.moviy.ui.theme.MoviyTheme
 
 @Composable
 fun MovieDetailScreen(
@@ -795,7 +795,7 @@ fun MovieTrailerSection(
             else -> {
                 val trailerKey = state.trailers.firstOrNull()?.key
                 if (trailerKey != null) {
-                    YouTubePlayer(
+                    TrailerPlayer(
                         videoId = trailerKey,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -805,37 +805,6 @@ fun MovieTrailerSection(
     }
 }
 
-@Composable
-fun YouTubePlayer(
-    modifier: Modifier = Modifier,
-    videoId: String
-) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    AndroidView(
-        factory = { context ->
-            YouTubePlayerView(context = context).apply {
-                enableAutomaticInitialization = false
-                lifecycleOwner.lifecycle.addObserver(observer = this)
-                val options = IFramePlayerOptions.Builder(context = context)
-                    .origin(origin = "https://${context.packageName}")
-                    .build()
-                initialize(
-                    youTubePlayerListener = object : AbstractYouTubePlayerListener() {
-                        override fun onReady(youTubePlayer: YouTubePlayer) {
-                            youTubePlayer.cueVideo(videoId = videoId, startSeconds = 0f)
-                        }
-                    },
-                    playerOptions = options
-                )
-            }
-        },
-        onRelease = { view ->
-            lifecycleOwner.lifecycle.removeObserver(observer = view)
-            view.release()
-        },
-        modifier = modifier
-    )
-}
 
 @Composable
 fun ReviewItem(
@@ -1029,5 +998,76 @@ fun ReviewsShimmer(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MovieDetailScreenContentPreview() {
+    val sampleMovie = Movie(
+        id = 1,
+        title = "Inception",
+        overview = "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
+        posterPath = null,
+        backdropPath = null,
+        releaseDate = "2010-07-16",
+        voteAverage = 8.8,
+        runtime = 148,
+        genres = listOf(Genre(id = 1, name = "Action"), Genre(id = 2, name = "Sci-Fi"))
+    )
+    val sampleReviews = listOf(
+        Review(
+            id = "r1",
+            author = "John Doe",
+            content = "This movie is absolutely mind-bending! Nolan at his peak.",
+            authorDetails = null,
+            createdAt = "2026-06-09T00:00:00.000Z"
+        ),
+        Review(
+            id = "r2",
+            author = "Jane Smith",
+            content = "Great CGI and score by Hans Zimmer.",
+            authorDetails = null,
+            createdAt = "2026-06-09T00:00:00.000Z"
+        )
+    )
+    val sampleTrailers = listOf(
+        Video(id = "v1", name = "Official Trailer", key = "YoHD9XEInc0", site = "YouTube", type = "Trailer")
+    )
+
+    MoviyTheme {
+        MovieDetailContent(
+            state = MovieDetailState(
+                movie = sampleMovie,
+                trailers = sampleTrailers,
+                reviews = sampleReviews
+            ),
+            onIntent = {},
+            onBackClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MovieDetailScreenLoadingPreview() {
+    MoviyTheme {
+        MovieDetailContent(
+            state = MovieDetailState(isLoadingDetails = true),
+            onIntent = {},
+            onBackClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MovieDetailScreenErrorPreview() {
+    MoviyTheme {
+        MovieDetailContent(
+            state = MovieDetailState(errorDetails = UiText.StringResource(R.string.error_unexpected)),
+            onIntent = {},
+            onBackClick = {}
+        )
     }
 }
