@@ -11,4 +11,5 @@ package id.my.hizari.moviy.navigation
 object NavigationArgs {
     const val GENRE_ID = "genreId"
     const val GENRE_NAME = "genreName"
+    const val MOVIE_ID = "movieId"
 }

@@ -17,4 +17,9 @@ sealed class Screen(val route: String) {
             return "discover/$genreId/$genreName"
         }
     }
+    object MovieDetail : Screen("detail/{${NavigationArgs.MOVIE_ID}}") {
+        fun createRoute(movieId: Int): String {
+            return "detail/$movieId"
+        }
+    }
 }

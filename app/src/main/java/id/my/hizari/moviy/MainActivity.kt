@@ -51,6 +51,7 @@ import id.my.hizari.moviy.navigation.Screen
 import id.my.hizari.moviy.ui.components.ApiKeyMissingScreen
 import id.my.hizari.moviy.ui.discover.DiscoverScreen
 import id.my.hizari.moviy.ui.genres.GenreScreen
+import id.my.hizari.moviy.ui.detail.MovieDetailScreen
 import id.my.hizari.moviy.ui.search.SearchScreen
 import id.my.hizari.moviy.ui.theme.MoviyTheme
 
@@ -156,8 +157,12 @@ fun MoviyApp(
                             )
                         ) {
                             DiscoverScreen(
-                                onMovieClick = { _ ->
-                                    // Will navigate to Detail in Phase 4
+                                onMovieClick = { movieId ->
+                                    navController.navigate(
+                                        route = Screen.MovieDetail.createRoute(
+                                            movieId = movieId
+                                        )
+                                    )
                                 },
                                 onBackClick = {
                                     navController.popBackStack()
@@ -165,10 +170,14 @@ fun MoviyApp(
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
-                        composable(Screen.Search.route) {
+                        composable(route = Screen.Search.route) {
                             SearchScreen(
-                                onMovieClick = { _ ->
-                                    // Will navigate to Detail in Phase 4
+                                onMovieClick = { movieId ->
+                                    navController.navigate(
+                                        route = Screen.MovieDetail.createRoute(
+                                            movieId = movieId
+                                        )
+                                    )
                                 },
                                 onBackClick = {
                                     navController.popBackStack()
@@ -176,6 +185,22 @@ fun MoviyApp(
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
+                        composable(
+                            route = Screen.MovieDetail.route,
+                            arguments = listOf(
+                                navArgument(name = NavigationArgs.MOVIE_ID, builder = {
+                                    type = NavType.IntType
+                                })
+                            ),
+                            content = {
+                                MovieDetailScreen(
+                                    onBackClick = {
+                                        navController.popBackStack()
+                                    },
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                        )
                     }
                 }
 

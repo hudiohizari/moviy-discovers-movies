@@ -41,27 +41,27 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun discoverMovies(genreId: String?, page: Int): List<Movie> {
-        val response = api.discoverMovies(genreId, page)
+        val response = api.discoverMovies(genreId = genreId, page = page)
         return response.results.map { it.toDomain() }
     }
 
     override suspend fun getMovieDetails(movieId: Int): Movie {
-        val response = api.getMovieDetails(movieId)
+        val response = api.getMovieDetails(movieId = movieId)
         return response.toDomain()
     }
 
     override suspend fun getMovieReviews(movieId: Int, page: Int): List<Review> {
-        val response = api.getMovieReviews(movieId, page)
+        val response = api.getMovieReviews(movieId = movieId, page = page)
         return response.results.map { it.toDomain() }
     }
 
     override suspend fun getMovieTrailers(movieId: Int): List<Video> {
-        val response = api.getMovieVideos(movieId)
+        val response = api.getMovieVideos(movieId = movieId)
         return response.results.map { it.toDomain() }
     }
 
     override suspend fun searchMovies(query: String, page: Int): List<Movie> {
-        val response = api.searchMovies(query, page)
+        val response = api.searchMovies(query = query, page = page)
         return response.results.map { it.toDomain() }
     }
 

@@ -42,4 +42,13 @@
     <string name="desc_clear_query">Clear search query</string>
     <string name="search_no_results">No movies found matching \"%1$s\"</string>
     <string name="search_start_typing">Start typing to search movies</string>
+
+    <!-- Movie Detail Screen -->
+    <string name="detail_runtime">%1$d mins</string>
+    <string name="detail_release_date">Release Date: %1$s</string>
+    <string name="detail_genres">Genres: %1$s</string>
+    <string name="detail_reviews_header">Reviews</string>
+    <string name="detail_no_reviews">No reviews yet.</string>
+    <string name="detail_no_trailer">No trailer available</string>
+    <string name="desc_toggle_favorite">Toggle Favorite</string>
 </resources>
