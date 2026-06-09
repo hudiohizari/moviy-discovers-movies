@@ -49,6 +49,10 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging)
 
+    // Chucker Network Inspector
+    debugImplementation(libs.chucker.library)
+    releaseImplementation(libs.chucker.library.no.op)
+
     // Coroutines core
     implementation(libs.kotlinx.coroutines.core)
 
