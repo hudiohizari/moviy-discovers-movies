@@ -19,6 +19,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import id.my.hizari.moviy.data.db.MoviyDatabase
+import id.my.hizari.moviy.data.db.dao.MovieCacheDao
 import id.my.hizari.moviy.data.db.dao.MovieDao
 import javax.inject.Singleton
 
@@ -37,13 +38,21 @@ object DatabaseModule {
             context,
             MoviyDatabase::class.java,
             "moviy_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(true)
+            .build()
     }
 
     @Provides
     @Singleton
     fun provideMovieDao(database: MoviyDatabase): MovieDao {
         return database.movieDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMovieCacheDao(database: MoviyDatabase): MovieCacheDao {
+        return database.movieCacheDao()
     }
 
     @Provides

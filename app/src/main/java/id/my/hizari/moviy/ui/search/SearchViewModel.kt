@@ -11,10 +11,8 @@ package id.my.hizari.moviy.ui.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import id.my.hizari.moviy.R
 import id.my.hizari.moviy.domain.usecase.SearchMoviesUseCase
-import id.my.hizari.moviy.ui.components.UiText
-import javax.inject.Inject
+import id.my.hizari.moviy.ui.components.toUiText
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +22,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -105,8 +104,7 @@ class SearchViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        error = e.localizedMessage?.let { msg -> UiText.DynamicString(value = msg) }
-                            ?: UiText.StringResource(resId = R.string.error_unexpected)
+                        error = e.toUiText()
                     )
                 }
             }
@@ -138,12 +136,7 @@ class SearchViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoadingNextPage = false,
-                        paginationError = e.localizedMessage?.let { msg ->
-                            UiText.DynamicString(
-                                value = msg
-                            )
-                        }
-                            ?: UiText.StringResource(resId = R.string.error_unexpected)
+                        paginationError = e.toUiText()
                     )
                 }
             }

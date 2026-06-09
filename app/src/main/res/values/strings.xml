@@ -27,6 +27,7 @@
     <string name="desc_copy_to_clipboard">Copy to clipboard</string>
 
     <!-- Error Fallbacks & Previews -->
+    <string name="error_no_internet">No internet connection. Please check your network and try again.</string>
     <string name="error_connection_timeout">Connection timeout. Please check your internet connection.</string>
     <string name="error_unexpected">An unexpected error occurred</string>
     <string name="preview_error_network">Network error: Connection timeout.</string>

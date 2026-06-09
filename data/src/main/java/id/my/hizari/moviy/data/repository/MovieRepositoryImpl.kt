@@ -11,19 +11,21 @@ package id.my.hizari.moviy.data.repository
 import id.my.hizari.moviy.data.api.TmdbApi
 import id.my.hizari.moviy.data.datasource.LocalFavoriteStore
 import id.my.hizari.moviy.data.datasource.LocalGenreStore
+import id.my.hizari.moviy.data.datasource.LocalMovieCacheStore
 import id.my.hizari.moviy.data.mapper.toDomain
 import id.my.hizari.moviy.domain.model.Genre
 import id.my.hizari.moviy.domain.model.Movie
 import id.my.hizari.moviy.domain.model.Review
 import id.my.hizari.moviy.domain.model.Video
 import id.my.hizari.moviy.domain.repository.MovieRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
     private val api: TmdbApi,
     private val localGenreStore: LocalGenreStore,
-    private val localFavoriteStore: LocalFavoriteStore
+    private val localFavoriteStore: LocalFavoriteStore,
+    private val localMovieCacheStore: LocalMovieCacheStore
 ) : MovieRepository {
 
     override suspend fun getGenres(): List<Genre> {
@@ -41,13 +43,29 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun discoverMovies(genreId: String?, page: Int): List<Movie> {
-        val response = api.discoverMovies(genreId = genreId, page = page)
-        return response.results.map { it.toDomain() }
+        val cacheKey = "genre_${genreId ?: "all"}"
+        return try {
+            val response = api.discoverMovies(genreId = genreId, page = page)
+            val movies = response.results.map { it.toDomain() }
+            localMovieCacheStore.saveMovies(cacheKey = cacheKey, page = page, movies = movies)
+            movies
+        } catch (e: Exception) {
+            val cached = localMovieCacheStore.getMovies(cacheKey = cacheKey, page = page)
+            cached.ifEmpty { throw e }
+        }
     }
 
     override suspend fun getMovieDetails(movieId: Int): Movie {
-        val response = api.getMovieDetails(movieId = movieId)
-        return response.toDomain()
+        return try {
+            val response = api.getMovieDetails(movieId = movieId)
+            response.toDomain()
+        } catch (e: Exception) {
+            val favorite = localFavoriteStore.getFavoriteMovie(movieId = movieId)
+            if (favorite != null) return favorite
+
+            val cached = localMovieCacheStore.getMovie(movieId = movieId)
+            cached ?: throw e
+        }
     }
 
     override suspend fun getMovieReviews(movieId: Int, page: Int): List<Review> {
@@ -61,8 +79,21 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun searchMovies(query: String, page: Int): List<Movie> {
-        val response = api.searchMovies(query = query, page = page)
-        return response.results.map { it.toDomain() }
+        val cacheKey = "search_$query"
+        return try {
+            val response = api.searchMovies(query = query, page = page)
+            val movies = response.results.map { it.toDomain() }
+            localMovieCacheStore.saveMovies(cacheKey = cacheKey, page = page, movies = movies)
+            try {
+                localMovieCacheStore.pruneSearchCache(maxAgeMs = 86400000L)
+            } catch (pruneEx: Exception) {
+                // Ignore pruning issues to prevent failing search requests
+            }
+            movies
+        } catch (e: Exception) {
+            val cached = localMovieCacheStore.getMovies(cacheKey = cacheKey, page = page)
+            cached.ifEmpty { throw e }
+        }
     }
 
     override fun getFavoriteMovies(): Flow<List<Movie>> {

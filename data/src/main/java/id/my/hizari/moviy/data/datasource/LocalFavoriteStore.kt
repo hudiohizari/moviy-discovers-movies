@@ -37,4 +37,8 @@ class LocalFavoriteStore @Inject constructor(
     fun isFavorite(movieId: Int): Flow<Boolean> {
         return movieDao.isFavorite(movieId)
     }
+
+    suspend fun getFavoriteMovie(movieId: Int): Movie? {
+        return movieDao.getFavoriteMovie(movieId)?.toDomain()
+    }
 }

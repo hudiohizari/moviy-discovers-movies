@@ -12,16 +12,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import id.my.hizari.moviy.R
 import id.my.hizari.moviy.domain.usecase.GetDiscoverMoviesUseCase
 import id.my.hizari.moviy.navigation.NavigationArgs
-import id.my.hizari.moviy.ui.components.UiText
-import javax.inject.Inject
+import id.my.hizari.moviy.ui.components.toUiText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
@@ -75,8 +74,7 @@ class DiscoverViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        error = e.localizedMessage?.let { msg -> UiText.DynamicString(msg) }
-                            ?: UiText.StringResource(R.string.error_unexpected)
+                        error = e.toUiText()
                     )
                 }
             }
@@ -106,8 +104,7 @@ class DiscoverViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoadingNextPage = false,
-                        paginationError = e.localizedMessage?.let { msg -> UiText.DynamicString(msg) }
-                            ?: UiText.StringResource(R.string.error_unexpected)
+                        paginationError = e.toUiText()
                     )
                 }
             }

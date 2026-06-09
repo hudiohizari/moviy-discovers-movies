@@ -67,12 +67,9 @@ An **Android Application** containing the UI layouts, presentation state logic, 
 
 ## Key Features
 
-1. **Discover Genres List**: An adaptive grid of official genres, loaded with linear gradients. It
-   is cached in Preferences DataStore for offline capability.
-2. **Movie Discovery Grid**: Displays movie posters filtered by genre. Features rating badges,
-   endless scroll pagination, and inline retry blocks on network errors.
-3. **Debounced Search**: Title search debounces inputs by 500ms to avoid unnecessary API overhead,
-   coupled with full pagination.
+1. **Discover Genres List**: An adaptive grid of official genres, loaded with linear gradients. It is cached in Preferences DataStore for offline capability.
+2. **Movie Discovery Grid**: Displays movie posters filtered by genre. Features rating badges, endless scroll pagination, inline retry blocks on network errors, and robust Room-backed offline caching.
+3. **Debounced Search**: Title search debounces inputs by 500ms to avoid unnecessary API overhead, coupled with full pagination and query-level offline caching.
 4. **Movie Details Screen**:
     - Backdrop image blending with transparent gradient overlays.
     - Hardware-accelerated sliding collapsing toolbar.

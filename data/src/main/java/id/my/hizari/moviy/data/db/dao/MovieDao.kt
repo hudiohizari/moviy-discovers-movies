@@ -8,7 +8,10 @@
 
 package id.my.hizari.moviy.data.db.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import id.my.hizari.moviy.data.db.entity.MovieEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -26,4 +29,7 @@ interface MovieDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_movies WHERE id = :movieId)")
     fun isFavorite(movieId: Int): Flow<Boolean>
+
+    @Query("SELECT * FROM favorite_movies WHERE id = :movieId")
+    suspend fun getFavoriteMovie(movieId: Int): MovieEntity?
 }

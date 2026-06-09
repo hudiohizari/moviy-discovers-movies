@@ -11,12 +11,25 @@ package id.my.hizari.moviy.data.repository
 import id.my.hizari.moviy.data.api.TmdbApi
 import id.my.hizari.moviy.data.datasource.LocalFavoriteStore
 import id.my.hizari.moviy.data.datasource.LocalGenreStore
-import id.my.hizari.moviy.data.model.*
+import id.my.hizari.moviy.data.datasource.LocalMovieCacheStore
+import id.my.hizari.moviy.data.model.AuthorDetailsDto
+import id.my.hizari.moviy.data.model.GenreDto
+import id.my.hizari.moviy.data.model.GenreResponse
+import id.my.hizari.moviy.data.model.MovieDto
+import id.my.hizari.moviy.data.model.MovieResponse
+import id.my.hizari.moviy.data.model.ReviewDto
+import id.my.hizari.moviy.data.model.ReviewResponse
+import id.my.hizari.moviy.data.model.VideoDto
+import id.my.hizari.moviy.data.model.VideoResponse
 import id.my.hizari.moviy.domain.model.Genre
 import id.my.hizari.moviy.domain.model.Movie
-import io.mockk.*
-import kotlinx.coroutines.flow.flowOf
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -27,11 +40,13 @@ class MovieRepositoryImplTest {
     private val api: TmdbApi = mockk()
     private val localGenreStore: LocalGenreStore = mockk(relaxed = true)
     private val localFavoriteStore: LocalFavoriteStore = mockk()
+    private val localMovieCacheStore: LocalMovieCacheStore = mockk()
 
     private val repository = MovieRepositoryImpl(
         api = api,
         localGenreStore = localGenreStore,
-        localFavoriteStore = localFavoriteStore
+        localFavoriteStore = localFavoriteStore,
+        localMovieCacheStore = localMovieCacheStore
     )
 
     @Test
@@ -114,10 +129,34 @@ class MovieRepositoryImplTest {
                 )
             )
             coEvery { api.discoverMovies("28", 1) } returns movieResponse
+            coEvery { localMovieCacheStore.saveMovies("genre_28", 1, expectedMovies) } just Runs
 
             val result = repository.discoverMovies("28", 1)
 
             assertEquals(expectedMovies, result)
+        }
+    }
+
+    @Test
+    fun discoverMovies_remoteError_fallbackToCache() {
+        runBlocking {
+            val cachedMovies = listOf(
+                Movie(
+                    id = 100,
+                    title = "Cached Movie",
+                    overview = "Overview",
+                    posterPath = null,
+                    backdropPath = null,
+                    releaseDate = null,
+                    voteAverage = 7.0
+                )
+            )
+            coEvery { api.discoverMovies("28", 1) } throws RuntimeException("Network error")
+            coEvery { localMovieCacheStore.getMovies("genre_28", 1) } returns cachedMovies
+
+            val result = repository.discoverMovies("28", 1)
+
+            assertEquals(cachedMovies, result)
         }
     }
 
@@ -152,10 +191,41 @@ class MovieRepositoryImplTest {
                 )
             )
             coEvery { api.searchMovies("Action", 1) } returns movieResponse
+            coEvery {
+                localMovieCacheStore.saveMovies(
+                    "search_Action",
+                    1,
+                    expectedMovies
+                )
+            } just Runs
+            coEvery { localMovieCacheStore.pruneSearchCache(86400000L) } just Runs
 
             val result = repository.searchMovies("Action", 1)
 
             assertEquals(expectedMovies, result)
+        }
+    }
+
+    @Test
+    fun searchMovies_remoteError_fallbackToCache() {
+        runBlocking {
+            val cachedMovies = listOf(
+                Movie(
+                    id = 101,
+                    title = "Cached Search",
+                    overview = "Overview",
+                    posterPath = null,
+                    backdropPath = null,
+                    releaseDate = null,
+                    voteAverage = 8.0
+                )
+            )
+            coEvery { api.searchMovies("Action", 1) } throws RuntimeException("Network error")
+            coEvery { localMovieCacheStore.getMovies("search_Action", 1) } returns cachedMovies
+
+            val result = repository.searchMovies("Action", 1)
+
+            assertEquals(cachedMovies, result)
         }
     }
 
@@ -185,6 +255,49 @@ class MovieRepositoryImplTest {
                 genres = listOf(Genre(1, "Action"))
             )
             coEvery { api.getMovieDetails(100) } returns movieDetailDto
+
+            val result = repository.getMovieDetails(100)
+
+            assertEquals(expectedMovie, result)
+        }
+    }
+
+    @Test
+    fun getMovieDetails_remoteError_fallbackToFavorites() {
+        runBlocking {
+            val expectedMovie = Movie(
+                id = 100,
+                title = "Favorite Movie",
+                overview = "Overview",
+                posterPath = null,
+                backdropPath = null,
+                releaseDate = null,
+                voteAverage = 8.0
+            )
+            coEvery { api.getMovieDetails(100) } throws RuntimeException("Network error")
+            coEvery { localFavoriteStore.getFavoriteMovie(100) } returns expectedMovie
+
+            val result = repository.getMovieDetails(100)
+
+            assertEquals(expectedMovie, result)
+        }
+    }
+
+    @Test
+    fun getMovieDetails_remoteError_notInFavorites_fallbackToCache() {
+        runBlocking {
+            val expectedMovie = Movie(
+                id = 100,
+                title = "Cached Movie Detail",
+                overview = "Overview",
+                posterPath = null,
+                backdropPath = null,
+                releaseDate = null,
+                voteAverage = 8.0
+            )
+            coEvery { api.getMovieDetails(100) } throws RuntimeException("Network error")
+            coEvery { localFavoriteStore.getFavoriteMovie(100) } returns null
+            coEvery { localMovieCacheStore.getMovie(100) } returns expectedMovie
 
             val result = repository.getMovieDetails(100)
 

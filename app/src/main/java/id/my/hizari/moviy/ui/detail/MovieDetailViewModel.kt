@@ -12,20 +12,19 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import id.my.hizari.moviy.R
 import id.my.hizari.moviy.domain.usecase.GetMovieDetailsUseCase
 import id.my.hizari.moviy.domain.usecase.GetMovieReviewsUseCase
 import id.my.hizari.moviy.domain.usecase.GetMovieTrailersUseCase
 import id.my.hizari.moviy.domain.usecase.IsFavoriteUseCase
 import id.my.hizari.moviy.domain.usecase.ToggleFavoriteUseCase
 import id.my.hizari.moviy.navigation.NavigationArgs
-import id.my.hizari.moviy.ui.components.UiText
-import javax.inject.Inject
+import id.my.hizari.moviy.ui.components.toUiText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailViewModel @Inject constructor(
@@ -89,8 +88,7 @@ class MovieDetailViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoadingDetails = false,
-                        errorDetails = e.localizedMessage?.let { msg -> UiText.DynamicString(value = msg) }
-                            ?: UiText.StringResource(resId = R.string.error_unexpected)
+                        errorDetails = e.toUiText()
                     )
                 }
             }
@@ -104,8 +102,7 @@ class MovieDetailViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoadingTrailers = false,
-                        errorTrailers = e.localizedMessage?.let { msg -> UiText.DynamicString(value = msg) }
-                            ?: UiText.StringResource(resId = R.string.error_unexpected)
+                        errorTrailers = e.toUiText()
                     )
                 }
             }
@@ -139,8 +136,7 @@ class MovieDetailViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoadingReviews = false,
-                        errorReviews = e.localizedMessage?.let { msg -> UiText.DynamicString(value = msg) }
-                            ?: UiText.StringResource(resId = R.string.error_unexpected)
+                        errorReviews = e.toUiText()
                     )
                 }
             }

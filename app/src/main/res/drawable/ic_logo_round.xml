@@ -1,0 +1,47 @@
+<!-- Circular version of the app logo -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="128dp"
+    android:height="128dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+
+    <path
+        android:pathData="M64,16 A48,48 0 1,1 63.99,16 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="112"
+                android:endY="112"
+                android:startX="16"
+                android:startY="16"
+                android:type="linear">
+                <item android:color="#1E293B" android:offset="0.0" />
+                <item android:color="#0B0F19" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path
+        android:pathData="M64,28 A36,36 0 1 1 28,64 A36,36 0 0 1 64,28 Z"
+        android:strokeWidth="4"
+        android:strokeColor="#6366F1"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:fillColor="#0D111A"
+        android:pathData="M64,38 A26,26 0 1 1 38,64 A26,26 0 0 1 64,38 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#1E293B"/>
+
+    <path android:fillColor="#1E293B" android:pathData="M64,44 A4,4 0 1 1 60,48 A4,4 0 0 1 64,44 Z"/>
+    <path android:fillColor="#1E293B" android:pathData="M80,64 A4,4 0 1 1 76,68 A4,4 0 0 1 80,64 Z"/>
+    <path android:fillColor="#1E293B" android:pathData="M64,80 A4,4 0 1 1 60,84 A4,4 0 0 1 64,80 Z"/>
+    <path android:fillColor="#1E293B" android:pathData="M48,64 A4,4 0 1 1 44,68 A4,4 0 0 1 48,64 Z"/>
+
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M56,48 L78,64 L56,80 Z"
+        android:strokeWidth="1"
+        android:strokeColor="#D97706"
+        android:strokeLineJoin="round"/>
+</vector>

@@ -48,3 +48,28 @@ sealed class UiText {
         }
     }
 }
+
+fun Throwable.toUiText(): UiText {
+    return when (this) {
+        is java.net.UnknownHostException -> {
+            UiText.StringResource(resId = id.my.hizari.moviy.R.string.error_no_internet)
+        }
+        is java.net.ConnectException -> {
+            UiText.StringResource(resId = id.my.hizari.moviy.R.string.error_no_internet)
+        }
+        is java.net.SocketTimeoutException -> {
+            UiText.StringResource(resId = id.my.hizari.moviy.R.string.error_connection_timeout)
+        }
+        is java.io.IOException -> {
+            UiText.StringResource(resId = id.my.hizari.moviy.R.string.error_no_internet)
+        }
+        else -> {
+            if (this::class.java.name == "retrofit2.HttpException") {
+                UiText.StringResource(resId = id.my.hizari.moviy.R.string.error_unexpected)
+            } else {
+                this.localizedMessage?.let { UiText.DynamicString(value = it) }
+                    ?: UiText.StringResource(resId = id.my.hizari.moviy.R.string.error_unexpected)
+            }
+        }
+    }
+}
