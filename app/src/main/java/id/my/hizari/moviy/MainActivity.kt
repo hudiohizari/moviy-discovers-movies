@@ -33,7 +33,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -78,7 +77,14 @@ fun MoviyApp(
         it.graphRoute == navBackStackEntry?.destination?.parent?.route
     } ?: AppDestinations.DISCOVER
 
-    val tabHistory = remember { mutableStateListOf(Screen.DiscoverGraph.route) }
+    val tabHistory = androidx.compose.runtime.saveable.rememberSaveable(
+        saver = androidx.compose.runtime.saveable.listSaver(
+            save = { it.toList() },
+            restore = { mutableStateListOf(*it.toTypedArray()) }
+        )
+    ) {
+        mutableStateListOf(Screen.DiscoverGraph.route)
+    }
 
     // Pre-calculate custom M3 item colors inside the @Composable scope
     val itemColors = NavigationSuiteDefaults.itemColors(
@@ -156,6 +162,7 @@ fun MoviyApp(
             BackHandler(
                 enabled = tabHistory.size > 1 && isAtTabRoot,
                 onBack = {
+                    val currentTabRoute = tabHistory.removeAt(index = tabHistory.lastIndex)
                     val previousTabRoute = tabHistory.lastOrNull() ?: Screen.DiscoverGraph.route
                     navController.navigate(route = previousTabRoute) {
                         popUpTo(id = navController.graph.findStartDestination().id) {
