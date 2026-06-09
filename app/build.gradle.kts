@@ -1,3 +1,7 @@
+import java.io.File
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -19,7 +23,19 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Load TMDB API key from local.properties or System Environment Variables
+        val localProperties = Properties()
+        val localPropertiesFile = File(rootProject.projectDir, "local.properties")
+        val apiKey = if (localPropertiesFile.exists()) {
+            FileInputStream(localPropertiesFile).use { localProperties.load(it) }
+            localProperties.getProperty("TMDB_API_KEY") ?: ""
+        } else {
+            System.getenv("TMDB_API_KEY") ?: ""
+        }
+        buildConfigField("String", "TMDB_API_KEY", "\"$apiKey\"")
     }
+
 
     buildTypes {
         release {
@@ -34,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -47,6 +64,29 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // Retrofit & OkHttp
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging)
+
+    // Icons
+    implementation(libs.androidx.compose.material.icons.extended)
+
+    // Image Loader
+    implementation(libs.coil.compose)
+
+
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
+    // Lifecycle & ViewModel Compose
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // YouTube Video Player Natively
+    implementation(libs.youtube.player)
+
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

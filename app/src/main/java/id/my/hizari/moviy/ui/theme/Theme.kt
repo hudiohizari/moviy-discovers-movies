@@ -1,3 +1,11 @@
+/**
+ * id.my.hizari.moviy.ui.theme
+ *
+ * Created by Hudio Hizari on 09/06/26.
+ * https://github.com/hudiohizari
+ * https://hizari.my.id
+ */
+
 package id.my.hizari.moviy.ui.theme
 
 import android.app.Activity
@@ -10,27 +18,38 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = SlatePrimary,
+    background = SlateBackground,
+    surface = SlateSurface,
+    onPrimary = Color.White,
+    onBackground = SlateTextPrimary,
+    onSurface = SlateTextPrimary,
+    onSurfaceVariant = SlateTextSecondary,
+    error = SlateAccent,
+    onError = Color.White,
+    secondary = SlateRating,
+    secondaryContainer = SlateShimmerSweep,
+    outline = SlateBorder,
+    surfaceVariant = SlateOverlay
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = SlatePrimary,
+    background = SlateBackground,
+    surface = SlateSurface,
     onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    onBackground = SlateTextPrimary,
+    onSurface = SlateTextPrimary,
+    onSurfaceVariant = SlateTextSecondary,
+    error = SlateAccent,
+    onError = Color.White,
+    secondary = SlateRating,
+    secondaryContainer = SlateShimmerSweep,
+    outline = SlateBorder,
+    surfaceVariant = SlateOverlay
 )
 
 @Composable
