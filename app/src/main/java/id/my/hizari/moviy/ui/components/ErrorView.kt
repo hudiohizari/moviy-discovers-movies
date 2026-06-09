@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.ui.theme.Dimens
+import id.my.hizari.moviy.ui.theme.MoviyTheme
 
 @Composable
 fun ErrorView(
@@ -120,7 +121,7 @@ fun ErrorView(
 @Preview(showBackground = true)
 @Composable
 fun ErrorViewPreview() {
-    MaterialTheme {
+    MoviyTheme {
         ErrorView(message = stringResource(R.string.preview_error_network)) {}
     }
 }

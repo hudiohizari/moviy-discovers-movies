@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.ui.theme.Dimens
+import id.my.hizari.moviy.ui.theme.MoviyTheme
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 
@@ -235,7 +236,7 @@ fun TutorialStepRow(
 @Preview(showBackground = true)
 @Composable
 fun ApiKeyMissingScreenPreview() {
-    MaterialTheme {
+    MoviyTheme {
         ApiKeyMissingScreen()
     }
 }

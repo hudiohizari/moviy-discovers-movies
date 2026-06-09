@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.ui.theme.Dimens
+import id.my.hizari.moviy.ui.theme.MoviyTheme
 import java.util.Locale
 
 @Composable
@@ -63,7 +64,7 @@ fun RatingBadge(
 @Preview
 @Composable
 fun RatingBadgePreview() {
-    MaterialTheme {
+    MoviyTheme {
         RatingBadge(rating = 8.5)
     }
 }
