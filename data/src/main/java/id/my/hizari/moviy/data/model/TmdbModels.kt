@@ -10,25 +10,23 @@ package id.my.hizari.moviy.data.model
 
 import com.google.gson.annotations.SerializedName
 
-// Genres Response DTOs
 data class GenreResponse(
-    @SerializedName("genres") val genres: List<Genre>
+    @SerializedName("genres") val genres: List<GenreDto>
 )
 
-data class Genre(
+data class GenreDto(
     @SerializedName("id") val id: Int,
     @SerializedName("name") val name: String
 )
 
-// Movies Discovery Response DTOs
 data class MovieResponse(
     @SerializedName("page") val page: Int,
-    @SerializedName("results") val results: List<Movie>,
+    @SerializedName("results") val results: List<MovieDto>,
     @SerializedName("total_pages") val totalPages: Int,
     @SerializedName("total_results") val totalResults: Int
 )
 
-data class Movie(
+data class MovieDto(
     @SerializedName("id") val id: Int,
     @SerializedName("title") val title: String,
     @SerializedName("overview") val overview: String?,
@@ -37,43 +35,41 @@ data class Movie(
     @SerializedName("release_date") val releaseDate: String?,
     @SerializedName("vote_average") val voteAverage: Double,
     @SerializedName("runtime") val runtime: Int? = null,
-    @SerializedName("genres") val genres: List<Genre>? = null
+    @SerializedName("genres") val genres: List<GenreDto>? = null
 )
 
-// Movie Reviews Response DTOs
 data class ReviewResponse(
     @SerializedName("id") val id: Int,
     @SerializedName("page") val page: Int,
-    @SerializedName("results") val results: List<Review>,
+    @SerializedName("results") val results: List<ReviewDto>,
     @SerializedName("total_pages") val totalPages: Int,
     @SerializedName("total_results") val totalResults: Int
 )
 
-data class Review(
+data class ReviewDto(
     @SerializedName("id") val id: String,
     @SerializedName("author") val author: String,
-    @SerializedName("author_details") val authorDetails: AuthorDetails?,
+    @SerializedName("author_details") val authorDetails: AuthorDetailsDto?,
     @SerializedName("content") val content: String,
     @SerializedName("created_at") val createdAt: String?
 )
 
-data class AuthorDetails(
+data class AuthorDetailsDto(
     @SerializedName("name") val name: String?,
     @SerializedName("username") val username: String,
     @SerializedName("avatar_path") val avatarPath: String?,
     @SerializedName("rating") val rating: Double?
 )
 
-// Videos/Trailers Response DTOs
 data class VideoResponse(
     @SerializedName("id") val id: Int,
-    @SerializedName("results") val results: List<Video>
+    @SerializedName("results") val results: List<VideoDto>
 )
 
-data class Video(
+data class VideoDto(
     @SerializedName("id") val id: String,
-    @SerializedName("key") val key: String, // Youtube video key
+    @SerializedName("key") val key: String,
     @SerializedName("name") val name: String,
-    @SerializedName("site") val site: String, // e.g. "YouTube"
-    @SerializedName("type") val type: String // e.g. "Trailer", "Teaser"
+    @SerializedName("site") val site: String,
+    @SerializedName("type") val type: String
 )
