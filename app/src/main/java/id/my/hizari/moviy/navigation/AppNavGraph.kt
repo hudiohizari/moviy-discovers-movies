@@ -24,6 +24,7 @@ import androidx.navigation.navigation
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.ui.detail.MovieDetailScreen
 import id.my.hizari.moviy.ui.discover.DiscoverScreen
+import id.my.hizari.moviy.ui.favorites.FavoritesScreen
 import id.my.hizari.moviy.ui.genres.GenreScreen
 import id.my.hizari.moviy.ui.search.SearchScreen
 
@@ -65,7 +66,7 @@ fun NavGraphBuilder.discoverGraph(
             DiscoverScreen(
                 onMovieClick = { movieId ->
                     navController.navigate(
-                        route = Screen.MovieDetail.createRoute(
+                        route = Screen.DiscoverMovieDetail.createRoute(
                             movieId = movieId
                         )
                     )
@@ -80,7 +81,7 @@ fun NavGraphBuilder.discoverGraph(
             SearchScreen(
                 onMovieClick = { movieId ->
                     navController.navigate(
-                        route = Screen.MovieDetail.createRoute(
+                        route = Screen.DiscoverMovieDetail.createRoute(
                             movieId = movieId
                         )
                     )
@@ -92,7 +93,7 @@ fun NavGraphBuilder.discoverGraph(
             )
         }
         composable(
-            route = Screen.MovieDetail.route,
+            route = Screen.DiscoverMovieDetail.route,
             arguments = listOf(
                 navArgument(name = NavigationArgs.MOVIE_ID, builder = {
                     type = NavType.IntType
@@ -111,45 +112,40 @@ fun NavGraphBuilder.discoverGraph(
 }
 
 fun NavGraphBuilder.favoritesGraph(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     navigation(
         startDestination = Screen.Favorites.route,
         route = Screen.FavoritesGraph.route
     ) {
         composable(route = Screen.Favorites.route) {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(id = R.string.coming_soon_favorites),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyLarge
+            FavoritesScreen(
+                modifier = modifier,
+                onMovieClick = { movieId ->
+                    navController.navigate(
+                        route = Screen.FavoritesMovieDetail.createRoute(
+                            movieId = movieId
+                        )
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.FavoritesMovieDetail.route,
+            arguments = listOf(
+                navArgument(name = NavigationArgs.MOVIE_ID, builder = {
+                    type = NavType.IntType
+                })
+            ),
+            content = {
+                MovieDetailScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    modifier = modifier.fillMaxSize()
                 )
             }
-        }
-    }
-}
-
-fun NavGraphBuilder.profileGraph(
-    modifier: Modifier = Modifier
-) {
-    navigation(
-        startDestination = Screen.Profile.route,
-        route = Screen.ProfileGraph.route
-    ) {
-        composable(route = Screen.Profile.route) {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(id = R.string.coming_soon_profile),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
+        )
     }
 }

@@ -18,14 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import id.my.hizari.moviy.ui.theme.Dimens
 
 @Composable
 fun ScrollShadowContainer(
     modifier: Modifier = Modifier,
     lazyGridState: LazyGridState,
-    topShadowHeight: Dp = 8.dp,
-    bottomShadowHeight: Dp = 8.dp,
+    topShadowHeight: Dp = Dimens.ElevationNormal,
+    bottomShadowHeight: Dp = Dimens.ElevationNormal,
     content: @Composable BoxScope.() -> Unit
 ) {
     val showTopShadow by remember {

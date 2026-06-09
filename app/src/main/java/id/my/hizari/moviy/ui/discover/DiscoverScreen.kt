@@ -59,13 +59,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.domain.model.Movie
 import id.my.hizari.moviy.ui.components.ErrorView
+import id.my.hizari.moviy.ui.components.MovieGridItem
 import id.my.hizari.moviy.ui.components.RatingBadge
 import id.my.hizari.moviy.ui.components.ScrollShadowContainer
 import id.my.hizari.moviy.ui.components.TestTags
@@ -169,7 +169,7 @@ fun DiscoverContent(
                     ) {
                         LazyVerticalGrid(
                             state = gridState,
-                            columns = GridCells.Adaptive(minSize = 130.dp),
+                            columns = GridCells.Adaptive(minSize = Dimens.GridItemMinWidthMovie),
                             contentPadding = PaddingValues(Dimens.PaddingMedium),
                             horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
                             verticalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
@@ -207,79 +207,6 @@ fun DiscoverContent(
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun MovieGridItem(
-    modifier: Modifier = Modifier,
-    movie: Movie,
-    onClick: () -> Unit
-) {
-    val posterUrl = if (movie.posterPath != null) {
-        "https://image.tmdb.org/t/p/w500${movie.posterPath}"
-    } else {
-        null
-    }
-
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(Dimens.CornerMedium),
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(2f / 3f)
-            .clip(RoundedCornerShape(Dimens.CornerMedium))
-            .clickable(onClick = onClick)
-            .border(
-                width = Dimens.BorderThin,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f),
-                shape = RoundedCornerShape(Dimens.CornerMedium)
-            )
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(posterUrl)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = movie.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            // Rating Badge top-right
-            RatingBadge(
-                rating = movie.voteAverage,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(Dimens.PaddingSmall)
-            )
-
-            // Title bottom overlay text
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.85f)
-                            )
-                        )
-                    )
-                    .padding(Dimens.PaddingSmall)
-            ) {
-                Text(
-                    text = movie.title,
-                    color = Color.White,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
             }
         }
     }
@@ -339,7 +266,7 @@ fun DiscoverShimmerGrid(
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 130.dp),
+        columns = GridCells.Adaptive(minSize = Dimens.GridItemMinWidthMovie),
         contentPadding = PaddingValues(Dimens.PaddingMedium),
         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),

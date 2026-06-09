@@ -41,7 +41,6 @@ import id.my.hizari.moviy.ui.components.UiText
 import id.my.hizari.moviy.ui.components.shimmerEffect
 import id.my.hizari.moviy.ui.theme.Dimens
 import id.my.hizari.moviy.ui.theme.MoviyTheme
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun GenreScreen(
@@ -138,7 +137,7 @@ fun GenreGrid(
     ) {
         LazyVerticalGrid(
             state = gridState,
-            columns = GridCells.Adaptive(minSize = 160.dp),
+            columns = GridCells.Adaptive(minSize = Dimens.GridItemMinWidthGenre),
             contentPadding = PaddingValues(Dimens.PaddingMedium),
             horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
             verticalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
@@ -205,7 +204,7 @@ fun GenreShimmerGrid(
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 160.dp),
+        columns = GridCells.Adaptive(minSize = Dimens.GridItemMinWidthGenre),
         contentPadding = PaddingValues(Dimens.PaddingMedium),
         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingNormal),

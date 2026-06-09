@@ -13,10 +13,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import id.my.hizari.moviy.R
-import id.my.hizari.moviy.domain.repository.MovieRepository
 import id.my.hizari.moviy.domain.usecase.GetMovieDetailsUseCase
 import id.my.hizari.moviy.domain.usecase.GetMovieReviewsUseCase
 import id.my.hizari.moviy.domain.usecase.GetMovieTrailersUseCase
+import id.my.hizari.moviy.domain.usecase.IsFavoriteUseCase
+import id.my.hizari.moviy.domain.usecase.ToggleFavoriteUseCase
 import id.my.hizari.moviy.navigation.NavigationArgs
 import id.my.hizari.moviy.ui.components.UiText
 import javax.inject.Inject
@@ -31,7 +32,8 @@ class MovieDetailViewModel @Inject constructor(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
     private val getMovieTrailersUseCase: GetMovieTrailersUseCase,
-    private val repository: MovieRepository,
+    private val isFavoriteUseCase: IsFavoriteUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -45,7 +47,7 @@ class MovieDetailViewModel @Inject constructor(
         if (id != null) {
             movieId = id
             viewModelScope.launch {
-                repository.isFavorite(movieId = movieId).collect { isFav ->
+                isFavoriteUseCase(movieId = movieId).collect { isFav ->
                     _state.update { it.copy(isFavorite = isFav) }
                 }
             }
@@ -148,7 +150,7 @@ class MovieDetailViewModel @Inject constructor(
     private fun toggleFavorite() {
         val movie = _state.value.movie ?: return
         viewModelScope.launch {
-            repository.toggleFavorite(movie = movie)
+            toggleFavoriteUseCase(movie = movie)
         }
     }
 }

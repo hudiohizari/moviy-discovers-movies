@@ -17,14 +17,18 @@ sealed class Screen(val route: String) {
             return "discover/$genreId/$genreName"
         }
     }
-    object MovieDetail : Screen("detail/{${NavigationArgs.MOVIE_ID}}") {
+    object DiscoverMovieDetail : Screen("discover_detail/{${NavigationArgs.MOVIE_ID}}") {
         fun createRoute(movieId: Int): String {
-            return "detail/$movieId"
+            return "discover_detail/$movieId"
+        }
+    }
+
+    object FavoritesMovieDetail : Screen("favorites_detail/{${NavigationArgs.MOVIE_ID}}") {
+        fun createRoute(movieId: Int): String {
+            return "favorites_detail/$movieId"
         }
     }
     object DiscoverGraph : Screen("discover_graph")
     object FavoritesGraph : Screen("favorites_graph")
-    object ProfileGraph : Screen("profile_graph")
     object Favorites : Screen("favorites_screen")
-    object Profile : Screen("profile_screen")
 }

@@ -12,10 +12,11 @@ import androidx.lifecycle.SavedStateHandle
 import id.my.hizari.moviy.domain.model.Movie
 import id.my.hizari.moviy.domain.model.Review
 import id.my.hizari.moviy.domain.model.Video
-import id.my.hizari.moviy.domain.repository.MovieRepository
 import id.my.hizari.moviy.domain.usecase.GetMovieDetailsUseCase
 import id.my.hizari.moviy.domain.usecase.GetMovieReviewsUseCase
 import id.my.hizari.moviy.domain.usecase.GetMovieTrailersUseCase
+import id.my.hizari.moviy.domain.usecase.IsFavoriteUseCase
+import id.my.hizari.moviy.domain.usecase.ToggleFavoriteUseCase
 import id.my.hizari.moviy.navigation.NavigationArgs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -44,7 +45,8 @@ class MovieDetailViewModelTest {
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase = mockk()
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase = mockk()
     private val getMovieTrailersUseCase: GetMovieTrailersUseCase = mockk()
-    private val repository: MovieRepository = mockk()
+    private val isFavoriteUseCase: IsFavoriteUseCase = mockk()
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase = mockk()
     private lateinit var savedStateHandle: SavedStateHandle
 
     @Before
@@ -55,7 +57,7 @@ class MovieDetailViewModelTest {
                 NavigationArgs.MOVIE_ID to 123
             )
         )
-        coEvery { repository.isFavorite(movieId = 123) } returns flowOf(value = true)
+        coEvery { isFavoriteUseCase(movieId = 123) } returns flowOf(value = true)
     }
 
     @After
@@ -101,7 +103,8 @@ class MovieDetailViewModelTest {
             getMovieDetailsUseCase = getMovieDetailsUseCase,
             getMovieReviewsUseCase = getMovieReviewsUseCase,
             getMovieTrailersUseCase = getMovieTrailersUseCase,
-            repository = repository,
+            isFavoriteUseCase = isFavoriteUseCase,
+            toggleFavoriteUseCase = toggleFavoriteUseCase,
             savedStateHandle = savedStateHandle
         )
 
@@ -161,7 +164,8 @@ class MovieDetailViewModelTest {
             getMovieDetailsUseCase = getMovieDetailsUseCase,
             getMovieReviewsUseCase = getMovieReviewsUseCase,
             getMovieTrailersUseCase = getMovieTrailersUseCase,
-            repository = repository,
+            isFavoriteUseCase = isFavoriteUseCase,
+            toggleFavoriteUseCase = toggleFavoriteUseCase,
             savedStateHandle = savedStateHandle
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -191,13 +195,14 @@ class MovieDetailViewModelTest {
         coEvery { getMovieDetailsUseCase(movieId = 123) } returns movie
         coEvery { getMovieTrailersUseCase(movieId = 123) } returns emptyList()
         coEvery { getMovieReviewsUseCase(movieId = 123, page = 1) } returns emptyList()
-        coEvery { repository.toggleFavorite(movie = movie) } returns true
+        coEvery { toggleFavoriteUseCase(movie = movie) } returns true
 
         val viewModel = MovieDetailViewModel(
             getMovieDetailsUseCase = getMovieDetailsUseCase,
             getMovieReviewsUseCase = getMovieReviewsUseCase,
             getMovieTrailersUseCase = getMovieTrailersUseCase,
-            repository = repository,
+            isFavoriteUseCase = isFavoriteUseCase,
+            toggleFavoriteUseCase = toggleFavoriteUseCase,
             savedStateHandle = savedStateHandle
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -205,6 +210,6 @@ class MovieDetailViewModelTest {
         viewModel.handleIntent(intent = MovieDetailIntent.ToggleFavorite)
         testDispatcher.scheduler.runCurrent()
 
-        coVerify(exactly = 1) { repository.toggleFavorite(movie = movie) }
+        coVerify(exactly = 1) { toggleFavoriteUseCase(movie = movie) }
     }
 }

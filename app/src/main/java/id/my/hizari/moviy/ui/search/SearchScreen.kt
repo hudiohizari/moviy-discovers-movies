@@ -27,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import id.my.hizari.moviy.R
 import id.my.hizari.moviy.domain.model.Movie
@@ -36,8 +35,8 @@ import id.my.hizari.moviy.ui.components.ScrollShadowContainer
 import id.my.hizari.moviy.ui.components.TestTags
 import id.my.hizari.moviy.ui.components.UiText
 import id.my.hizari.moviy.ui.components.shimmerEffect
+import id.my.hizari.moviy.ui.components.MovieGridItem
 import id.my.hizari.moviy.ui.discover.DiscoverShimmerGrid
-import id.my.hizari.moviy.ui.discover.MovieGridItem
 import id.my.hizari.moviy.ui.discover.PaginationErrorRow
 import id.my.hizari.moviy.ui.theme.Dimens
 import id.my.hizari.moviy.ui.theme.MoviyTheme
@@ -179,7 +178,7 @@ fun SearchContent(
                     ) {
                         LazyVerticalGrid(
                             state = gridState,
-                            columns = GridCells.Adaptive(minSize = 130.dp),
+                            columns = GridCells.Adaptive(minSize = Dimens.GridItemMinWidthMovie),
                             contentPadding = PaddingValues(all = Dimens.PaddingMedium),
                             horizontalArrangement = Arrangement.spacedBy(space = Dimens.PaddingNormal),
                             verticalArrangement = Arrangement.spacedBy(space = Dimens.PaddingNormal),

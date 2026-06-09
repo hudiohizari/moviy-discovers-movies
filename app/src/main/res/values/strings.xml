@@ -4,11 +4,9 @@
     <!-- Navigation Destinations -->
     <string name="nav_discover">Discover</string>
     <string name="nav_favorites">Favorites</string>
-    <string name="nav_profile">Profile</string>
 
     <!-- Placeholder screens -->
     <string name="coming_soon_favorites">Favorites Screen (Coming Soon)</string>
-    <string name="coming_soon_profile">Profile Screen (Coming Soon)</string>
 
     <!-- Genres Screen -->
     <string name="title_discover_genres">Discover Genres</string>
@@ -51,4 +49,6 @@
     <string name="detail_no_reviews">No reviews yet.</string>
     <string name="detail_no_trailer">No trailer available</string>
     <string name="desc_toggle_favorite">Toggle Favorite</string>
+    <string name="empty_favorites_title">No Favorites Yet</string>
+    <string name="empty_favorites_desc">Movies you favorite will appear here. Start exploring!</string>
 </resources>

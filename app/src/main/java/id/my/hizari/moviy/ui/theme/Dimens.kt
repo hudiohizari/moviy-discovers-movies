@@ -37,10 +37,21 @@ object Dimens {
     val ButtonHeightNormal = 48.dp
     val IconButtonSmall = 36.dp
     val StepCircleSize = 24.dp
-    
+
     // Custom borders
     val BorderThin = 1.dp
+    val BorderNormal = 2.dp
     val ElevationNormal = 8.dp
+
+    // Grid item min widths
+    val GridItemMinWidthGenre = 160.dp
+    val GridItemMinWidthMovie = 130.dp
+
+    // Avatar sizes
+    val AvatarLarge = 120.dp
+
+    // Extra micro spaces
+    val PaddingMicro = 2.dp
 
     // Text Sizes (sp)
     val TextSmall = 11.sp

@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material3.Icon
@@ -47,7 +46,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import id.my.hizari.moviy.navigation.Screen
 import id.my.hizari.moviy.navigation.discoverGraph
 import id.my.hizari.moviy.navigation.favoritesGraph
-import id.my.hizari.moviy.navigation.profileGraph
 import id.my.hizari.moviy.ui.components.ApiKeyMissingScreen
 import id.my.hizari.moviy.ui.theme.MoviyTheme
 
@@ -80,7 +78,7 @@ fun MoviyApp(
         it.graphRoute == navBackStackEntry?.destination?.parent?.route
     } ?: AppDestinations.DISCOVER
 
-    val tabHistory = remember { mutableStateListOf<String>(Screen.DiscoverGraph.route) }
+    val tabHistory = remember { mutableStateListOf(Screen.DiscoverGraph.route) }
 
     // Pre-calculate custom M3 item colors inside the @Composable scope
     val itemColors = NavigationSuiteDefaults.itemColors(
@@ -148,10 +146,8 @@ fun MoviyApp(
                     navController = navController
                 )
                 favoritesGraph(
-                    modifier = Modifier.fillMaxSize()
-                )
-                profileGraph(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController
                 )
             }
 
@@ -160,7 +156,6 @@ fun MoviyApp(
             BackHandler(
                 enabled = tabHistory.size > 1 && isAtTabRoot,
                 onBack = {
-                    val currentTabRoute = tabHistory.removeAt(index = tabHistory.lastIndex)
                     val previousTabRoute = tabHistory.lastOrNull() ?: Screen.DiscoverGraph.route
                     navController.navigate(route = previousTabRoute) {
                         popUpTo(id = navController.graph.findStartDestination().id) {
@@ -192,11 +187,5 @@ enum class AppDestinations(
         icon = Icons.Default.Favorite,
         graphRoute = Screen.FavoritesGraph.route,
         rootRoute = Screen.Favorites.route
-    ),
-    PROFILE(
-        labelRes = R.string.nav_profile,
-        icon = Icons.Default.AccountCircle,
-        graphRoute = Screen.ProfileGraph.route,
-        rootRoute = Screen.Profile.route
-    ),
+    )
 }
