@@ -1,7 +1,7 @@
 # Moviy - Discover Movies
 
-Moviy is a native Android application built with **Kotlin**, **Jetpack Compose**, and **Material 3
-**, utilizing **Clean Architecture** combined with the **MVI (Model-View-Intent)** presentation
+Moviy is a native Android application built with **Kotlin**, **Jetpack Compose**, and **Material 3**, 
+utilizing **Clean Architecture** combined with the **MVI (Model-View-Intent)** presentation
 pattern. It connects to The Movie Database (TMDB) API to fetch and display movies, trailers, and
 user reviews.
 
